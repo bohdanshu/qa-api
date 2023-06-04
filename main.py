@@ -1,26 +1,63 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-import json
-import uvicorn
-from types import SimpleNamespace
 
 
 app = FastAPI()
 
 
-@app.get("/get", response_class=HTMLResponse)
+@app.get("/method", response_class=HTMLResponse)
 async def root(request: Request):
-    return f"""</br>
-    This is a {request.method} request</br></br>
-    url: {request.url}</br></br>
-    headers: {[f"{'</br>'+ str([word.decode('utf8') for word in sets])}" for sets in request.headers.raw]}</br></br>
-    query_params: {request.query_params}</br></br>
-    """
+    method_msg = f"</br> This is {request.method} reqest</br>"
+    url_msg = f"</br> URL: {request.url}</br>"
+    headers_msg = stringify_headers(request.headers.raw)
+    query_msg = f"</br>Query_params: {request.query_params}</br>"
+    return f"{method_msg} {url_msg} {query_msg} {headers_msg}"
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+@app.post("/method", response_class=HTMLResponse)
+async def root(request: Request):
+    method_msg = f"</br> This is {request.method} reqest</br>"
+    url_msg = f"</br> URL: {request.url}</br>"
+    headers_msg = stringify_headers(request.headers.raw)
+    query_msg = f"</br>Query_params: {request.query_params}</br>"
+    try:
+        jsondata = await request.json()
+    except Exception as e:
+        print(e)
+        jsondata = None
+    return f"{method_msg} {url_msg} {query_msg} {headers_msg} </br> </br> {jsondata if jsondata else None}"
 
-if __name__ == "__main__":
-    uvicorn.run(app,host="0.0.0.0", port=8000)
+
+@app.put("/method", response_class=HTMLResponse)
+async def root(request: Request):
+    method_msg = f"</br> This is {request.method} reqest</br>"
+    url_msg = f"</br> URL: {request.url}</br>"
+    headers_msg = stringify_headers(request.headers.raw)
+    query_msg = f"</br>Query_params: {request.query_params}</br>"
+    try:
+        jsondata = await request.json()
+    except Exception as e:
+        print(e)
+        jsondata = None
+    return f"{method_msg} {url_msg} {query_msg} {headers_msg} </br> </br> {jsondata if jsondata else None}"
+
+
+@app.delete("/method", response_class=HTMLResponse)
+async def root(request: Request):
+    method_msg = f"</br> This is {request.method} reqest</br>"
+    url_msg = f"</br> URL: {request.url}</br>"
+    headers_msg = stringify_headers(request.headers.raw)
+    query_msg = f"</br>Query_params: {request.query_params}</br>"
+    try:
+        jsondata = await request.json()
+    except Exception as e:
+        print(e)
+        jsondata = None
+    return f"{method_msg} {url_msg} {query_msg} {headers_msg} </br> </br> {jsondata if jsondata else None}"
+
+def stringify_headers(headers):
+    headers_list = [[word.decode('utf8') for word in sets] for sets in headers]
+    html_headers = "</br>Headers:</br>"
+    for list_ in headers_list:
+        html_headers += f"</br> {list_[0]} : {list_[1]}"
+    return html_headers
