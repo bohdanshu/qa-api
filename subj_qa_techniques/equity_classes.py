@@ -11,6 +11,7 @@ class ClientReference(BaseModel):
 
 class BuildEquity(BaseModel):
     sequences: list = Field(description="sequences to build equity")
+
     class Config:
         schema_extra = {
             "example": {
@@ -18,10 +19,11 @@ class BuildEquity(BaseModel):
                 }
         }
 
+
 router = APIRouter()
 
 
-@router.post("/equity_classes", tags=["qa techniques"])
+@router.post("/equity_classes", tags=["equity classes"], description="Route that gives response based on age passed; \nage ranges are 0-17, 18-30, 31-60, 61-...")
 async def equity_classes(client_ref: ClientReference):
     if client_ref.age <= 17:
         return {"message": "No credits available for client younger than 18 years old"}
@@ -33,7 +35,7 @@ async def equity_classes(client_ref: ClientReference):
         return {"message": "No credits available for client older than 60 years old"}
 
 
-@router.post("/equity_classes/build", tags=["qa techniques"])
+@router.post("/equity_classes/build", tags=["equity classes"])
 async def build_equity(item: BuildEquity):
     seq = [[int(y) for y in x.split("-")] for x in item.sequences]
     resp = {}
@@ -42,7 +44,7 @@ async def build_equity(item: BuildEquity):
     return resp
 
 
-@router.post("/buy_weapon", tags=["qa techniques"])
+@router.post("/buy_weapon", tags=["equity classes"], description="Route that gives age-based response on weapon buyer status; age ranges are 0-17, 18-20, 21-24, 25-...")
 async def equity_classes(client_ref: ClientReference):
     if 18 <= client_ref.age < 21:
         return {"message": "Ви маєте право на придбання холодної, охолощеної та пневматичної зброї та основних частин до неї "}
@@ -54,7 +56,7 @@ async def equity_classes(client_ref: ClientReference):
         return {"message": "Ви не можете придбати зброю"}
 
 
-@router.get("/buy_weapon/build", tags=["qa techniques"])
+@router.get("/buy_weapon/build", tags=["equity classes"])
 async def build_equity():
     resp = {"val1": random.randint(0, 20), "val2": random.randint(21, 24), "val3": random.randint(25, 100)}
     return resp
